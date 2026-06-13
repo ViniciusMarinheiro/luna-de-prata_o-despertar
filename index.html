@@ -103,11 +103,12 @@
                 <p class="font-bold text-red-500 mb-2 text-center text-lg cinzel-font">MANUAL DO CAÇADOR:</p>
                 <div class="grid grid-cols-2 gap-4 text-sm">
                     <div class="bg-black/50 p-3 rounded border border-zinc-800">
-                        <span class="text-amber-500 font-bold block mb-1">MOVIMENTO</span>
+                        <span class="text-amber-500 font-bold block mb-1">MOVIMENTO & LUZ</span>
                         <kbd class="px-2 py-1 bg-zinc-800 rounded text-xs">W</kbd>
                         <kbd class="px-2 py-1 bg-zinc-800 rounded text-xs">A</kbd>
                         <kbd class="px-2 py-1 bg-zinc-800 rounded text-xs">S</kbd>
-                        <kbd class="px-2 py-1 bg-zinc-800 rounded text-xs">D</kbd> ou Setas direcionais
+                        <kbd class="px-2 py-1 bg-zinc-800 rounded text-xs">D</kbd> ou Setas<br>
+                        <kbd class="px-2 py-1 bg-zinc-800 rounded text-xs mt-1">F</kbd> Ligar/Desligar Lanterna
                     </div>
                     <div class="bg-black/50 p-3 rounded border border-zinc-800">
                         <span class="text-amber-500 font-bold block mb-1">MIRA LIVRE (3D) & TIRO</span>
@@ -388,10 +389,10 @@
         </div>
     </div>
 
-    <!-- Sprites da Mão segurando a arma em 2D na parte inferior direita da tela (Fidelidade GoldenEye 007 PP7) -->
-    <div id="weapon-container" class="absolute bottom-0 right-[12%] w-[420px] h-[420px] pointer-events-none z-20 select-none flex items-end justify-end">
-        <!-- Flash do disparo (Posicionado exatamente na ponta do cano silenciador) -->
-        <svg id="muzzle-flash" class="absolute top-[30px] left-[70px] w-48 h-48 opacity-0 transition-opacity duration-75 pointer-events-none" viewBox="0 0 100 100">
+    <!-- Sprites da Mão segurando a arma em 2D na parte inferior direita da tela (Fidelidade PP7 Silenciada) -->
+    <div id="weapon-container" class="absolute bottom-0 right-[5%] w-[480px] h-[480px] pointer-events-none z-20 select-none flex items-end justify-end">
+        <!-- Flash do disparo (Posicionado de acordo com a ponta do silenciador) -->
+        <svg id="muzzle-flash" class="absolute top-[80px] left-[55px] w-48 h-48 opacity-0 transition-opacity duration-75 pointer-events-none" viewBox="0 0 100 100">
             <defs>
                 <radialGradient id="flashGrad" cx="50%" cy="50%" r="50%">
                     <stop offset="0%" stop-color="#fff" stop-opacity="1" />
@@ -404,82 +405,105 @@
             <polygon points="50,25 58,42 75,50 58,58 50,75 42,58 25,50 42,42" fill="#ffffff" />
         </svg>
 
-        <!-- Corpo da Mão Segurando a PP7 Silenciada (Sprite SVG redesenhado com alta fidelidade) -->
-        <svg id="weapon-sprite" class="w-full h-full transition-transform duration-100 origin-bottom-right" viewBox="0 0 300 300">
+        <!-- Corpo da Mão Segurando a PP7 Silenciada (Alta Definição e Design de Pistola Realista) -->
+        <svg id="weapon-sprite" class="w-full h-full transition-transform duration-100 origin-bottom-right" viewBox="0 0 400 400">
             <defs>
-                <!-- Gradiente Metálico para a Arma -->
-                <linearGradient id="gunMetal" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#475569" />
-                    <stop offset="35%" stop-color="#1e293b" />
-                    <stop offset="75%" stop-color="#0f172a" />
+                <!-- Gradiente Metálico para a Pistola -->
+                <linearGradient id="pistolBaseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#334155" />
+                    <stop offset="40%" stop-color="#1e293b" />
+                    <stop offset="80%" stop-color="#0f172a" />
                     <stop offset="100%" stop-color="#020617" />
                 </linearGradient>
-                <!-- Destaques Brilhantes do Metal Polido -->
-                <linearGradient id="metalHighlight" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#0f172a" />
-                    <stop offset="25%" stop-color="#64748b" />
-                    <stop offset="45%" stop-color="#94a3b8" />
-                    <stop offset="55%" stop-color="#cbd5e1" />
-                    <stop offset="70%" stop-color="#475569" />
+                <!-- Destaques Brilhantes do Aço Polido -->
+                <linearGradient id="steelGlint" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#1e293b" />
+                    <stop offset="30%" stop-color="#475569" />
+                    <stop offset="50%" stop-color="#cbd5e1" />
+                    <stop offset="70%" stop-color="#334155" />
                     <stop offset="100%" stop-color="#0f172a" />
                 </linearGradient>
-                <!-- Gradiente para o Silenciador Cilíndrico com Sombra -->
-                <linearGradient id="silencerGlow" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#070a12" />
-                    <stop offset="25%" stop-color="#334155" />
-                    <stop offset="40%" stop-color="#cbd5e1" />
-                    <stop offset="65%" stop-color="#1e293b" />
+                <!-- Gradiente do Silenciador Metálico Rosqueado -->
+                <linearGradient id="silencerBarrelGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#090d16" />
+                    <stop offset="30%" stop-color="#334155" />
+                    <stop offset="50%" stop-color="#64748b" />
+                    <stop offset="80%" stop-color="#1e293b" />
                     <stop offset="100%" stop-color="#020617" />
                 </linearGradient>
-                <!-- Pele Natural Realista (Fiel à mão visível de 007) -->
-                <linearGradient id="skinTone" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#ffe3cf" />
-                    <stop offset="60%" stop-color="#e8b18a" />
-                    <stop offset="100%" stop-color="#a8714a" />
+                <!-- Luva Tática de Couro Blindada -->
+                <linearGradient id="gloveLeatherGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#27272a" />
+                    <stop offset="50%" stop-color="#18181b" />
+                    <stop offset="100%" stop-color="#09090b" />
+                </linearGradient>
+                <!-- Blindagem Metálica dos Nós dos Dedos (Knuckles) -->
+                <linearGradient id="armorKevlar" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#4b5563" />
+                    <stop offset="50%" stop-color="#d1d5db" />
+                    <stop offset="100%" stop-color="#1f2937" />
                 </linearGradient>
             </defs>
 
-            <!-- Sombra projetada do braço -->
-            <path d="M 140 300 L 260 300 L 230 220 L 160 220 Z" fill="#020204" opacity="0.35" />
+            <!-- Braço que se estende do canto inferior direito -->
+            <path d="M 220 400 L 400 280 L 400 400 Z" fill="url(#gloveLeatherGrad)" />
+            
+            <!-- Manga do Casaco de Veludo Gótico (Azul Escuro com abas douradas) -->
+            <path d="M 310 330 L 400 260 L 400 370 Z" fill="#0f172a" stroke="#d97706" stroke-width="1.5" />
 
-            <!-- 1. BRAÇO / ANTEBRAÇO DE PELE (GoldenEye Clássico) -->
-            <path d="M 148 300 L 252 300 C 252 300, 242 225, 226 205 C 210 185, 175 190, 160 210 C 148 225, 148 300, 148 300 Z" fill="url(#skinTone)" />
+            <!-- Punho e Corpo da Pistola (PP7 Clássica) -->
+            <!-- Cabo da Pistola com empunhadura antiderrapante preta -->
+            <path d="M 210 220 L 260 300 L 210 340 L 170 260 Z" fill="#090d16" stroke="#000000" stroke-width="3" />
+            <!-- Ranhuras do Cabo antiderrapante -->
+            <path d="M 190 270 L 220 315 M 195 285 L 225 330" stroke="#18181b" stroke-width="2.5" />
 
-            <!-- 2. PUNHO / CORPO DA PISTOLA -->
-            <path d="M 158 165 L 202 235 L 178 250 L 138 180 Z" fill="url(#gunMetal)" stroke="#020617" stroke-width="2" />
+            <!-- Guarda-Mato (Protetor do Gatilho) -->
+            <path d="M 160 215 Q 140 235, 170 255 L 195 240" stroke="url(#steelGlint)" stroke-width="5" fill="none" />
+            <!-- Gatilho de Prata Polida -->
+            <path d="M 172 225 Q 160 240, 180 244" stroke="#e2e8f0" stroke-width="3.5" fill="none" />
 
-            <!-- 3. GUARDA-MATO (Trigger Guard) -->
-            <path d="M 122 165 Q 108 180, 128 190 L 142 180" stroke="url(#metalHighlight)" stroke-width="4.5" fill="none" />
-            <!-- Gatilho de Prata -->
-            <path d="M 129 170 Q 122 180, 133 183" stroke="#94a3b8" stroke-width="3" fill="none" />
+            <!-- Mecanismo de Disparo / Cão da Pistola -->
+            <path d="M 235 180 Q 255 175, 240 195 Z" fill="url(#steelGlint)" stroke="#020617" />
 
-            <!-- 4. CORPO DA ARMA / FERROLHO (Slide) -->
-            <path d="M 118 115 L 182 140 L 172 195 L 122 175 Z" fill="url(#gunMetal)" stroke="#090d16" stroke-width="2.5" />
-            <path d="M 123 120 L 177 143 L 171 160 L 121 140 Z" fill="url(#metalHighlight)" opacity="0.85" />
-            <!-- Alça de Mira Traseira -->
-            <path d="M 169 130 L 175 135 L 171 143 Z" fill="#020617" />
+            <!-- Slide Superior (Ferrolho Metálico com ranhuras de ejeção) -->
+            <path d="M 150 160 L 245 190 L 230 250 L 155 225 Z" fill="url(#pistolBaseGrad)" stroke="#020617" stroke-width="3" />
+            <path d="M 155 165 L 235 190 L 225 210 L 155 185 Z" fill="url(#steelGlint)" opacity="0.9" />
+            
+            <!-- Linhas de ranhuras no ferrolho metálico -->
+            <line x1="210" y1="192" x2="206" y2="215" stroke="#090d16" stroke-width="3" />
+            <line x1="215" y1="194" x2="211" y2="217" stroke="#090d16" stroke-width="3" />
+            <line x1="220" y1="196" x2="216" y2="219" stroke="#090d16" stroke-width="3" />
 
-            <!-- 5. SILENCIADOR LONGO (Angulado perfeitamente em direção à mira) -->
-            <!-- Peça de Conexão com o Cano -->
-            <path d="M 121 116 L 136 122 L 132 107 L 117 101 Z" fill="url(#gunMetal)" />
-            <!-- Cilindro Principal do Silenciador -->
-            <path d="M 117 101 L 132 107 L 82 27 L 67 21 Z" fill="url(#silencerGlow)" stroke="#090d16" stroke-width="1.5" />
-            <!-- Ponteira e ranhura do cano -->
-            <path d="M 67 21 L 82 27 L 79 17 L 64 11 Z" fill="#090d16" />
-            <!-- Linha de Brilho Dinâmico refletindo no Silenciador -->
-            <line x1="121" y1="103" x2="71" y2="23" stroke="#ffffff" stroke-width="2.5" opacity="0.85" />
+            <!-- Silenciador Longo de Alta Definição (PP7 de GoldenEye 007) -->
+            <!-- Rosca de conexão -->
+            <path d="M 152 161 L 165 164 L 158 145 L 145 141 Z" fill="url(#pistolBaseGrad)" />
+            <!-- Corpo cilíndrico do Silenciador -->
+            <path d="M 148 142 L 161 146 L 95 38 L 82 34 Z" fill="url(#silencerBarrelGrad)" stroke="#020617" stroke-width="2" />
+            <!-- Ponta de saída do projétil -->
+            <path d="M 82 34 L 95 38 L 91 26 L 78 22 Z" fill="#020617" />
+            <!-- Linha de brilho dinâmico para realçar a forma cilíndrica 3D do cano -->
+            <line x1="152" y1="141" x2="86" y2="33" stroke="#ffffff" stroke-width="3" opacity="0.85" />
+            <line x1="155" y1="143" x2="89" y2="35" stroke="#94a3b8" stroke-width="1.5" opacity="0.5" />
 
-            <!-- 6. MÃO GRIPANDO A ARMA COM DEDOS DETALHADOS -->
-            <!-- Polegar cobrindo a parte traseira do cabo -->
-            <path d="M 172 190 Q 188 190, 182 205 Q 166 211, 172 190 Z" fill="url(#skinTone)" stroke="#5c3821" stroke-width="1.5" />
-            <!-- Dedo Indicador envolto no gatilho -->
-            <path d="M 145 175 Q 127 175, 131 189 Q 145 187, 145 175 Z" fill="url(#skinTone)" stroke="#5c3821" stroke-width="1.5" />
-            <!-- Dedo Médio -->
-            <path d="M 149 189 Q 133 190, 137 204 Q 151 202, 149 189 Z" fill="url(#skinTone)" stroke="#5c3821" stroke-width="1.5" />
+            <!-- Mão com Luva Tática segurando a pistola com dedos definidos -->
+            <!-- Dedo Polegar cruzando o cão -->
+            <path d="M 230 235 C 248 235, 246 255, 226 260 Z" fill="url(#gloveLeatherGrad)" stroke="#18181b" stroke-width="1.5" />
+            <!-- Dedo Indicador dentro do guarda-mato, tocando o gatilho -->
+            <path d="M 195 220 Q 158 225, 172 245 Q 192 240, 195 220 Z" fill="url(#gloveLeatherGrad)" stroke="#18181b" stroke-width="2" />
+            <!-- Placa de proteção metálica no dedo indicador -->
+            <path d="M 182 226 L 175 233" stroke="url(#armorKevlar)" stroke-width="3.5" stroke-linecap="round" />
+
+            <!-- Dedo Médio envolvendo a empunhadura -->
+            <path d="M 205 240 Q 165 242, 178 265 Q 212 260, 205 240 Z" fill="url(#gloveLeatherGrad)" stroke="#18181b" stroke-width="2" />
+            <path d="M 190 246 L 182 254" stroke="url(#armorKevlar)" stroke-width="4" stroke-linecap="round" />
+
             <!-- Dedo Anelar -->
-            <path d="M 153 203 Q 139 204, 143 218 Q 157 216, 153 203 Z" fill="url(#skinTone)" stroke="#5c3821" stroke-width="1.5" />
+            <path d="M 210 258 Q 175 261, 185 284 Q 218 278, 210 258 Z" fill="url(#gloveLeatherGrad)" stroke="#18181b" stroke-width="2" />
+            <path d="M 196 264 L 189 272" stroke="url(#armorKevlar)" stroke-width="4" stroke-linecap="round" />
+
             <!-- Dedo Mindinho -->
-            <path d="M 157 215 Q 145 216, 149 230 Q 161 228, 157 215 Z" fill="url(#skinTone)" stroke="#5c3821" stroke-width="1.5" />
+            <path d="M 215 276 Q 185 279, 192 302 Q 225 296, 215 276 Z" fill="url(#gloveLeatherGrad)" stroke="#18181b" stroke-width="2" />
+            <path d="M 202 282 L 195 290" stroke="url(#armorKevlar)" stroke-width="4" stroke-linecap="round" />
         </svg>
     </div>
 
@@ -557,11 +581,15 @@
         let enableParticles = true;
         let dustPoints = null;
 
+        // Lanterna do Caçador
+        let playerFlashlight;
+        let flashlightOn = true;
+
         // Texturas Geradas Proceduralmente por Canvas
         let textures = {};
 
         // --- SISTEMA DE ÁUDIO AVANÇADO COM TONE.JS ---
-        let synthBGM, synthFX, synthHowl, footstepSynth, heartbeatSynth, windNoise, windFilter;
+        let synthBGM, synthFX, synthHowl, footstepSynth, heartbeatSynth, windNoise, windFilter, clickSynth;
         let ambientWolfTimer = 0;
 
         function initSound() {
@@ -634,6 +662,13 @@
             }).toDestination();
             heartbeatSynth.volume.value = -8;
 
+            // 7. Sintetizador para cliques de interruptores
+            clickSynth = new Tone.Synth({
+                oscillator: { type: "square" },
+                envelope: { attack: 0.001, decay: 0.05, sustain: 0, release: 0.05 }
+            }).toDestination();
+            clickSynth.volume.value = -15;
+
             Tone.Transport.start();
         }
 
@@ -646,6 +681,13 @@
                 }).toDestination();
                 pageSynth.volume.value = -10;
                 pageSynth.triggerAttack(Tone.now());
+            } catch (e) { console.log(e); }
+        }
+
+        function playFlashlightClickSound() {
+            if (!soundStarted) return;
+            try {
+                clickSynth.triggerAttackRelease("C5", "0.02");
             } catch (e) { console.log(e); }
         }
 
@@ -847,7 +889,8 @@
             textures.grate = new THREE.CanvasTexture(canvasGrate);
         }
 
-        // --- SISTEMA DE DESIGNS DE LOBISOMEM HD (256px) ---
+        // --- SISTEMA DE DESIGNS DE LOBISOMEM REALISTA HD (256px) ---
+        // Desenha texturas procedurais com sombreado 3D de alta qualidade no Canvas
         function generateWerewolfSprite(state, type = 'comum') {
             const canvas = document.createElement('canvas');
             canvas.width = 256;
@@ -856,17 +899,20 @@
 
             ctx.clearRect(0, 0, 256, 256);
 
+            // Cores e tons para simular pelos realistas em camadas
             let cBody, cCrina, cHead, cEye, cEyePupil, cMouth, cSkinDetail;
             if (type === 'comum') {
-                cBody = '#2c221e'; cCrina = '#4d3b35'; cHead = '#1c1412'; cEye = '#ff3300'; cEyePupil = '#ffff00'; cMouth = '#660000'; cSkinDetail = '#150f0e';
+                cBody = '#38221b'; cCrina = '#573c32'; cHead = '#271714'; cEye = '#ff3300'; cEyePupil = '#ffff00'; cMouth = '#550505'; cSkinDetail = '#180e0c';
             } else if (type === 'veloz') {
-                cBody = '#131317'; cCrina = '#25252d'; cHead = '#09090b'; cEye = '#ffff00'; cEyePupil = '#ff8800'; cMouth = '#550005'; cSkinDetail = '#050506';
+                cBody = '#15151c'; cCrina = '#2f2f3d'; cHead = '#0e0e14'; cEye = '#facc15'; cEyePupil = '#ea580c'; cMouth = '#450202'; cSkinDetail = '#07070b';
             } else if (type === 'bruto') {
-                cBody = '#3e444a'; cCrina = '#5c646c'; cHead = '#272b2f'; cEye = '#ff003c'; cEyePupil = '#000000'; cMouth = '#7a0010'; cSkinDetail = '#181b1e';
+                cBody = '#434a54'; cCrina = '#65717f'; cHead = '#2b303a'; cEye = '#dc2626'; cEyePupil = '#000000'; cMouth = '#6b0303'; cSkinDetail = '#1c1e24';
             } else if (type === 'alfa') {
-                cBody = '#e2e8f0'; cCrina = '#ffffff'; cHead = '#cbd5e1'; cEye = '#ff0055'; cEyePupil = '#ffffff'; cMouth = '#99001a'; cSkinDetail = '#94a3b8';
+                cBody = '#cbd5e1'; cCrina = '#f8fafc'; cHead = '#94a3b8'; cEye = '#ec4899'; cEyePupil = '#ffffff'; cMouth = '#880202'; cSkinDetail = '#64748b';
             }
 
+            // Nota: O sprite morto é obsoleto pois o sistema agora tomba e fadeia o sprite vivo,
+            // mas mantemos o canvas morto para o Bestiário ou redundância.
             if (state === 'dead') {
                 const bloodGrad = ctx.createRadialGradient(128, 210, 10, 128, 210, 90);
                 bloodGrad.addColorStop(0, 'rgba(180, 0, 0, 0.95)');
@@ -877,25 +923,20 @@
 
                 ctx.fillStyle = cHead;
                 ctx.beginPath(); ctx.ellipse(128, 200, 68, 26, 0, 0, Math.PI * 2); ctx.fill();
-                
-                ctx.fillStyle = cBody;
-                ctx.beginPath(); ctx.arc(72, 204, 20, 0, Math.PI * 2); ctx.fill();
-                
-                ctx.fillStyle = cSkinDetail;
-                ctx.beginPath();
-                ctx.moveTo(72, 210); ctx.lineTo(40, 216); ctx.lineTo(68, 196); ctx.closePath();
-                ctx.fill();
-
-                ctx.fillStyle = '#880000';
-                ctx.fillRect(104, 190, 30, 8);
                 return canvas;
             }
 
             const isAttacking = (state === 'attack');
             const walkCycle = (state === 'walk2');
 
-            // Desenhar Perna Traseira Esquerda e Direita (HD Shading)
-            ctx.fillStyle = cSkinDetail;
+            // 1. Pernas Traseiras Digitígradas com Gradiente de Volume
+            const legGrad = ctx.createLinearGradient(0, 180, 0, 240);
+            legGrad.addColorStop(0, cBody);
+            legGrad.addColorStop(1, cSkinDetail);
+            ctx.fillStyle = legGrad;
+            ctx.strokeStyle = cSkinDetail;
+            ctx.lineWidth = type === 'bruto' ? 24 : (type === 'veloz' ? 12 : 18);
+            
             ctx.beginPath();
             if (walkCycle) {
                 ctx.moveTo(86, 180); ctx.lineTo(64, 240); ctx.lineTo(92, 244);
@@ -904,63 +945,69 @@
                 ctx.moveTo(80, 180); ctx.lineTo(70, 236); ctx.lineTo(90, 240);
                 ctx.moveTo(160, 180); ctx.lineTo(170, 236); ctx.lineTo(190, 240);
             }
-            ctx.lineWidth = type === 'bruto' ? 24 : (type === 'veloz' ? 12 : 18);
-            ctx.strokeStyle = cSkinDetail;
             ctx.stroke();
 
-            // Cauda Peluda com volume
+            // 2. Cauda Peluda com Curvas Complexas
             ctx.fillStyle = cSkinDetail;
             ctx.beginPath();
             ctx.moveTo(160, 170); ctx.quadraticCurveTo(230, 190, 210, 230); ctx.quadraticCurveTo(184, 210, 160, 184); ctx.closePath();
             ctx.fill();
 
-            // Tronco Corcunda Massivo
-            ctx.fillStyle = cBody;
-            const chestRadius = type === 'bruto' ? 64 : (type === 'veloz' ? 38 : 52);
+            // 3. Tronco e Corcunda Musculosa com Sombreamento 3D
+            const chestRadius = type === 'bruto' ? 68 : (type === 'veloz' ? 40 : 54);
+            const bodyGrad = ctx.createRadialGradient(128, 140, 5, 128, 140, chestRadius);
+            bodyGrad.addColorStop(0, cCrina);
+            bodyGrad.addColorStop(0.8, cBody);
+            bodyGrad.addColorStop(1, cSkinDetail);
+            ctx.fillStyle = bodyGrad;
             ctx.beginPath(); ctx.arc(128, 140, chestRadius, 0, Math.PI * 2); ctx.fill();
 
-            // Pelagem detalhada da crina (Iteração de Curvas de Pelos HD)
+            // 4. Crina das Costas Espessa e Selvagem
             ctx.fillStyle = cCrina;
             ctx.beginPath();
             ctx.moveTo(76, 110); ctx.quadraticCurveTo(128, type === 'bruto' ? 44 : 60, 180, 110); ctx.lineTo(160, 156); ctx.lineTo(96, 156); ctx.closePath();
             ctx.fill();
 
-            // Desenha pelos extras ao redor da crina para realismo gótico
+            // Desenhar mechas de pelos individuais para realismo
             ctx.strokeStyle = cCrina;
-            ctx.lineWidth = 3;
-            for (let i = 0; i < 20; i++) {
+            ctx.lineWidth = 4;
+            for (let i = 0; i < 24; i++) {
                 const px = 80 + Math.random() * 96;
                 const py = 70 + Math.random() * 60;
                 ctx.beginPath();
                 ctx.moveTo(px, py);
-                ctx.lineTo(px + (Math.random() - 0.5) * 15, py + 12 + Math.random() * 12);
+                ctx.quadraticCurveTo(px + (Math.random() - 0.5) * 20, py + 15, px + (Math.random() - 0.5) * 10, py + 30);
                 ctx.stroke();
             }
 
-            // Cicatrizes no Peito do Bruto
+            // Cicatrizes de Combate para o Bruto
             if (type === 'bruto') {
                 ctx.strokeStyle = '#990000';
                 ctx.lineWidth = 6;
                 ctx.beginPath(); ctx.moveTo(104, 120); ctx.lineTo(124, 160); ctx.moveTo(148, 116); ctx.lineTo(132, 152); ctx.stroke();
             }
 
-            // Runas brilhantes no Alfa
+            // Altar Runas Brilhantes para o Alfa
             if (type === 'alfa') {
                 ctx.strokeStyle = '#38bdf8';
                 ctx.lineWidth = 4;
                 ctx.shadowColor = '#0284c7';
-                ctx.shadowBlur = 8;
+                ctx.shadowBlur = 10;
                 ctx.beginPath();
                 ctx.moveTo(110, 120); ctx.lineTo(128, 100); ctx.lineTo(146, 120); ctx.stroke();
-                ctx.shadowBlur = 0; // reseta shadow
+                ctx.shadowBlur = 0; // reseta shadow do canvas
             }
 
-            // Cabeça
+            // 5. Cabeça de Lobo com Focinho em Perspetiva
             const headY = isAttacking ? 104 : 92;
-            ctx.fillStyle = cHead;
+            const headGrad = ctx.createRadialGradient(128, headY, 2, 128, headY, 30);
+            headGrad.addColorStop(0, cCrina);
+            headGrad.addColorStop(0.7, cHead);
+            headGrad.addColorStop(1, cSkinDetail);
+            ctx.fillStyle = headGrad;
             ctx.beginPath(); ctx.arc(128, headY, 30, 0, Math.PI * 2); ctx.fill();
 
-            // Orelhas Pontudas Erguidas
+            // Orelhas Pontudas Detalhadas
             ctx.fillStyle = cSkinDetail;
             ctx.beginPath();
             const earH = type === 'veloz' ? 60 : 40;
@@ -968,44 +1015,46 @@
             ctx.moveTo(152, headY - 20); ctx.lineTo(148 + earH/2, headY - earH); ctx.lineTo(140, headY - 28);
             ctx.fill();
 
-            // Focinho
+            // Focinho Alongado e Carnudo
             ctx.fillStyle = cSkinDetail;
             ctx.beginPath();
-            ctx.moveTo(108, headY); ctx.lineTo(128, headY + 40); ctx.lineTo(148, headY); ctx.closePath();
+            ctx.moveTo(108, headY); ctx.lineTo(128, headY + 42); ctx.lineTo(148, headY); ctx.closePath();
             ctx.fill();
 
-            // Olhos Brilhantes com Glow Radial
-            const leftEyeGrad = ctx.createRadialGradient(116, headY - 4, 1, 116, headY - 4, 8);
+            // Olhos Ferais com Brilho Intenso (Glow)
+            const leftEyeGrad = ctx.createRadialGradient(116, headY - 4, 1, 116, headY - 4, 10);
             leftEyeGrad.addColorStop(0, '#ffffff');
-            leftEyeGrad.addColorStop(0.3, cEyePupil);
+            leftEyeGrad.addColorStop(0.2, cEyePupil);
             leftEyeGrad.addColorStop(1, 'rgba(255, 0, 0, 0)');
             
-            const rightEyeGrad = ctx.createRadialGradient(140, headY - 4, 1, 140, headY - 4, 8);
+            const rightEyeGrad = ctx.createRadialGradient(140, headY - 4, 1, 140, headY - 4, 10);
             rightEyeGrad.addColorStop(0, '#ffffff');
-            rightEyeGrad.addColorStop(0.3, cEyePupil);
+            rightEyeGrad.addColorStop(0.2, cEyePupil);
             rightEyeGrad.addColorStop(1, 'rgba(255, 0, 0, 0)');
 
             ctx.fillStyle = leftEyeGrad;
-            ctx.beginPath(); ctx.arc(116, headY - 4, 8, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(116, headY - 4, 10, 0, Math.PI * 2); ctx.fill();
             ctx.fillStyle = rightEyeGrad;
-            ctx.beginPath(); ctx.arc(140, headY - 4, 8, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(140, headY - 4, 10, 0, Math.PI * 2); ctx.fill();
 
-            // Boca/Mandíbula Gótica
+            // Boca Arreganhada com Presas Brancas
             if (isAttacking) {
                 ctx.fillStyle = cMouth;
                 ctx.fillRect(112, headY + 16, 32, 20);
                 
-                // Presas afiadas
+                // Desenhar presas afiadas detalhadamente
                 ctx.fillStyle = '#ffffff';
-                ctx.fillRect(116, headY + 14, 4, 8); 
-                ctx.fillRect(136, headY + 14, 4, 8);
+                ctx.beginPath();
+                ctx.moveTo(114, headY + 15); ctx.lineTo(118, headY + 25); ctx.lineTo(122, headY + 15);
+                ctx.moveTo(134, headY + 15); ctx.lineTo(138, headY + 25); ctx.lineTo(142, headY + 15);
+                ctx.fill();
             } else {
                 ctx.strokeStyle = cMouth;
                 ctx.lineWidth = 5;
                 ctx.beginPath(); ctx.moveTo(114, headY + 16); ctx.lineTo(142, headY + 16); ctx.stroke();
             }
 
-            // Braços e Garras afiadas (Lembrando Doom Claws)
+            // 6. Braços e Garras Afiadas (Visual Doom-Style Claws)
             ctx.fillStyle = cBody;
             ctx.strokeStyle = cSkinDetail;
             ctx.lineWidth = 6;
@@ -1015,8 +1064,8 @@
                 ctx.moveTo(186, 140); ctx.quadraticCurveTo(232, 120, 224, 76);
                 ctx.stroke();
 
-                // Unhas afiadas douradas ou pratas
-                ctx.fillStyle = type === 'alfa' ? '#fbbf24' : '#e2e8f0';
+                // Garras afiadas reluzentes
+                ctx.fillStyle = type === 'alfa' ? '#fbbf24' : '#f1f5f9';
                 ctx.beginPath();
                 ctx.moveTo(28, 76); ctx.lineTo(16, 56); ctx.lineTo(38, 68); ctx.fill();
                 ctx.beginPath();
@@ -1078,7 +1127,7 @@
             textures.ceiling.wrapS = THREE.RepeatWrapping; textures.ceiling.wrapT = THREE.RepeatWrapping;
             textures.ceiling.repeat.set(24, 24);
 
-            const ambientLight = new THREE.AmbientLight(0x1a2233, 1.2);
+            const ambientLight = new THREE.AmbientLight(0x1a2233, 0.65);
             scene.add(ambientLight);
 
             const moonLight = new THREE.DirectionalLight(0x4a628a, 0.8);
@@ -1089,6 +1138,12 @@
 
             // Adiciona sistema global de poeira flutuante
             createDustSystem();
+
+            // INSTANCIAÇÃO DA LANTERNA DO CAÇADOR
+            playerFlashlight = new THREE.SpotLight(0xfffee0, 5.0, 25, Math.PI / 5, 0.7, 1.3);
+            playerFlashlight.position.copy(camera.position);
+            scene.add(playerFlashlight);
+            scene.add(playerFlashlight.target);
 
             window.addEventListener('resize', onWindowResize);
         }
@@ -1290,6 +1345,9 @@
                 this.animFrame = 1;
                 this.animTimer = 0;
                 this.isAggro = false;
+                
+                // Temporizador de morte para fade-out dinâmico
+                this.deathTimer = 1.0; 
 
                 const mat = new THREE.SpriteMaterial({
                     map: werewolfTextures[this.type].walk1,
@@ -1315,13 +1373,17 @@
 
                 if (this.health <= 0) {
                     this.state = 'dead';
-                    this.sprite.material.map = werewolfTextures[this.type].dead;
-                    this.sprite.scale.set(this.size * 1.2, this.size * 1.2, 1.0);
-                    this.sprite.position.y = 0; 
+                    this.deathTimer = 1.0;
+                    
+                    // Clona o material do sprite individualmente para permitir transparência e fade-out
+                    this.sprite.material = this.sprite.material.clone();
+                    this.sprite.material.transparent = true;
+                    this.sprite.material.opacity = 1.0;
+                    
                     player.kills++;
                     updateHUD();
                     checkVictoryCondition();
-                    playWolfHowl(false);
+                    playWolfHowl(false); // Uivo de agonia ao tombar
                 } else {
                     this.state = 'attack';
                     this.stateTimer = 0.4;
@@ -1331,7 +1393,25 @@
             }
 
             update(delta) {
-                if (this.state === 'dead') return;
+                // ANIMAÇÃO DE QUEDA E DISSIPAÇÃO SE ESTIVER MORTO (Filtro de Opacidade & Queda)
+                if (this.state === 'dead') {
+                    if (this.deathTimer > 0) {
+                        this.deathTimer -= delta * 0.9; // Tempo de queda e sumiço (~1.1 segundos)
+                        if (this.deathTimer < 0) this.deathTimer = 0;
+
+                        // Rotaciona o sprite gradualmente para simular a queda no chão gótico
+                        this.sprite.rotation.z = (1.0 - this.deathTimer) * -Math.PI / 2.3;
+                        // Afunda o sprite de forma realista para parecer caído horizontalmente
+                        this.sprite.position.y = (1.0 - this.deathTimer) * -1.6;
+                        // Diminui a opacidade até sumir por completo
+                        this.sprite.material.opacity = this.deathTimer;
+
+                        if (this.deathTimer === 0) {
+                            scene.remove(this.sprite);
+                        }
+                    }
+                    return;
+                }
 
                 const dx = player.x - this.x;
                 const dz = player.z - this.z;
@@ -1518,6 +1598,7 @@
             camera.getWorldDirection(direction);
             raycaster.set(camera.position, direction);
 
+            // Filtra apenas lobisomens vivos para registrar tiro
             const targets = werewolves.filter(w => w.state !== 'dead').map(w => w.sprite);
             const intersects = raycaster.intersectObjects(targets);
 
@@ -1535,6 +1616,14 @@
                     particles.push(new Particle(sparkX, 1.2, sparkZ, 0x555555));
                 }
             }
+        }
+
+        // Toggles da Lanterna de Prata
+        function toggleFlashlight() {
+            if (!gameActive || player.isDead) return;
+            flashlightOn = !flashlightOn;
+            playerFlashlight.intensity = flashlightOn ? 5.0 : 0;
+            playFlashlightClickSound();
         }
 
         function updateHUD() {
@@ -1671,7 +1760,7 @@
                     dmg: "30",
                     spd: "2.7",
                     aggro: "Suprema",
-                    desc: "A criatura mítica que originou a maldição ancestral das terras de Prata. Habita no profundo altar de sacrifício. Possui garras de ouro reluzentes e crina prateada sagrada."
+                    desc: "A criatura mítica que originou a amaldiçoada maldição das terras de Prata. Habita no profundo altar de sacrifício. Possui garras de ouro reluzentes e crina prateada sagrada."
                 }
             };
 
@@ -1688,7 +1777,6 @@
             ctx.clearRect(0, 0, 128, 128);
 
             const tempSprite = generateWerewolfSprite('walk1', type);
-            // Redimensiona o canvas 256px de volta para o preview de 128px
             ctx.drawImage(tempSprite, 0, 0, 256, 256, 0, 0, 128, 128);
         }
 
@@ -1740,17 +1828,16 @@
                 activeBtn.classList.add('bg-red-700', 'text-white');
             }
 
-            // Altera pixelRatio de renderização em tempo real (Qualidade de Renderização)
             if (level === 'low') {
-                renderer.setPixelRatio(0.5); // Retro-pixelated
+                renderer.setPixelRatio(0.5); 
             } else if (level === 'med') {
-                renderer.setPixelRatio(1.0); // Standard
+                renderer.setPixelRatio(1.0); 
             } else if (level === 'high') {
-                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // HD
+                renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); 
             }
         }
 
-        // Eventos de mudança no Menu de Configurações
+        // Eventos do Menu de Configurações
         document.getElementById('slider-sens').addEventListener('input', (e) => {
             const multiplier = parseFloat(e.target.value);
             document.getElementById('sens-val').innerText = `${multiplier.toFixed(1)}x`;
@@ -1791,7 +1878,6 @@
             }
         });
 
-        // Sincroniza o botão caso o usuário saia do modo tela cheia apertando 'ESC' no teclado
         document.addEventListener('fullscreenchange', () => {
             const chkFullscreen = document.getElementById('chk-fullscreen');
             if (chkFullscreen) {
@@ -1815,6 +1901,11 @@
             if (key === 's' || e.key === 'ArrowDown') keys.s = true;
             if (key === 'd' || e.key === 'ArrowRight') keys.d = true;
 
+            // Tecla 'F' - Alternar lanterna
+            if (key === 'f') {
+                toggleFlashlight();
+            }
+
             if (e.key === 'Escape') {
                 if (!document.getElementById('bestiary-overlay').classList.contains('hidden')) {
                     closeBestiary();
@@ -1823,9 +1914,10 @@
                     closeSettings();
                     e.stopPropagation(); e.preventDefault();
                 } else if (gameActive && !player.isDead && !winState) {
-                    // Pausa o jogo imediatamente ao liberar o mouse e ativar o overlay
+                    // Libertar cursor e pausar jogo imediatamente
                     document.exitPointerLock();
                     document.getElementById('pause-overlay').classList.remove('hidden');
+                    e.stopPropagation(); e.preventDefault();
                 }
             }
         });
@@ -2037,6 +2129,14 @@
 
                 camera.position.x = player.x;
                 camera.position.z = player.z;
+
+                // ATUALIZAÇÃO DA DIREÇÃO DA LANTERNA DO CAÇADOR
+                if (playerFlashlight) {
+                    playerFlashlight.position.copy(camera.position);
+                    const dir = new THREE.Vector3();
+                    camera.getWorldDirection(dir);
+                    playerFlashlight.target.position.copy(camera.position).add(dir);
+                }
 
                 werewolves.forEach(wolf => {
                     wolf.update(delta);
