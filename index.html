@@ -21,6 +21,72 @@
             overflow: hidden;
             user-select: none;
         }
+
+        // --- VARIAÇÕES DE CENÁRIO (Temas ambientais configuráveis) ---
+        environmentVariants = {
+            standard: {
+                background: 0x020204,
+                fogDensity: 0.045,
+                ambientColor: '#1a2233',
+                ambientIntensity: 0.65,
+                moonColor: '#4a628a',
+                moonIntensity: 0.8,
+                torchColor: 0xff6600,
+                torchIntensity: 2.8,
+                floorTint: null,
+                enableParticles: true
+            },
+            foggy: {
+                background: 0x0b0b11,
+                fogDensity: 0.09,
+                ambientColor: '#0f1720',
+                ambientIntensity: 0.45,
+                moonColor: '#6b7280',
+                moonIntensity: 0.5,
+                torchColor: 0xff8a33,
+                torchIntensity: 2.2,
+                floorTint: '#0f1112',
+                enableParticles: true
+            },
+            moonlit: {
+                background: 0x081229,
+                fogDensity: 0.03,
+                ambientColor: '#1e3a6a',
+                ambientIntensity: 0.85,
+                moonColor: '#9fb7ff',
+                moonIntensity: 1.0,
+                torchColor: 0xffd1a1,
+                torchIntensity: 2.6,
+                floorTint: '#10172a',
+                enableParticles: false
+            },
+            bloodmoon: {
+                background: 0x12060a,
+                fogDensity: 0.07,
+                ambientColor: '#2b0b0f',
+                ambientIntensity: 0.5,
+                moonColor: '#7f1d1d',
+                moonIntensity: 0.9,
+                torchColor: 0xff5533,
+                torchIntensity: 3.0,
+                floorTint: '#2a0e0e',
+                enableParticles: true
+            }
+        };
+
+        function applyEnvironmentVariant(name) {
+            const v = environmentVariants[name];
+            if (!v || !scene) return;
+            scene.background = new THREE.Color(v.background);
+            if (scene.fog) scene.fog.density = v.fogDensity;
+            if (ambientLight) { ambientLight.color.set(v.ambientColor); ambientLight.intensity = v.ambientIntensity; }
+            if (moonLight) { moonLight.color.set(v.moonColor); moonLight.intensity = v.moonIntensity; }
+            if (floorMesh && floorMesh.material && v.floorTint) {
+                try { floorMesh.material.color.set(v.floorTint); floorMesh.material.needsUpdate = true; } catch (e) {}
+            }
+            torchLights.forEach(t => { try { t.color.set(v.torchColor); t.intensity = v.torchIntensity; } catch (e) {} });
+            enableParticles = v.enableParticles;
+        }
         .gothic-title {
             font-family: 'Creepster', cursive;
         }
@@ -389,10 +455,10 @@
         </div>
     </div>
 
-    <!-- Sprites da Mão segurando a arma em 2D na parte inferior direita da tela (Fidelidade PP7 Silenciada) -->
-    <div id="weapon-container" class="absolute bottom-0 right-[5%] w-[480px] h-[480px] pointer-events-none z-20 select-none flex items-end justify-end">
-        <!-- Flash do disparo (Posicionado de acordo com a ponta do silenciador) -->
-        <svg id="muzzle-flash" class="absolute top-[80px] left-[55px] w-48 h-48 opacity-0 transition-opacity duration-75 pointer-events-none" viewBox="0 0 100 100">
+    <!-- Sprites da Mão segurando a arma em 2D na parte inferior direita da tela -->
+    <div id="weapon-container" class="absolute bottom-0 right-[25%] w-[480px] h-[480px] pointer-events-none z-20 select-none flex items-center justify-center">
+        <!-- Flash do disparo (Posicionado na ponta da arma) -->
+        <svg id="muzzle-flash" class="absolute top-[12px] left-[8px] w-48 h-48 opacity-0 transition-opacity duration-75 pointer-events-none" viewBox="0 0 100 100">
             <defs>
                 <radialGradient id="flashGrad" cx="50%" cy="50%" r="50%">
                     <stop offset="0%" stop-color="#fff" stop-opacity="1" />
@@ -405,106 +471,8 @@
             <polygon points="50,25 58,42 75,50 58,58 50,75 42,58 25,50 42,42" fill="#ffffff" />
         </svg>
 
-        <!-- Corpo da Mão Segurando a PP7 Silenciada (Alta Definição e Design de Pistola Realista) -->
-        <svg id="weapon-sprite" class="w-full h-full transition-transform duration-100 origin-bottom-right" viewBox="0 0 400 400">
-            <defs>
-                <!-- Gradiente Metálico para a Pistola -->
-                <linearGradient id="pistolBaseGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#334155" />
-                    <stop offset="40%" stop-color="#1e293b" />
-                    <stop offset="80%" stop-color="#0f172a" />
-                    <stop offset="100%" stop-color="#020617" />
-                </linearGradient>
-                <!-- Destaques Brilhantes do Aço Polido -->
-                <linearGradient id="steelGlint" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#1e293b" />
-                    <stop offset="30%" stop-color="#475569" />
-                    <stop offset="50%" stop-color="#cbd5e1" />
-                    <stop offset="70%" stop-color="#334155" />
-                    <stop offset="100%" stop-color="#0f172a" />
-                </linearGradient>
-                <!-- Gradiente do Silenciador Metálico Rosqueado -->
-                <linearGradient id="silencerBarrelGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#090d16" />
-                    <stop offset="30%" stop-color="#334155" />
-                    <stop offset="50%" stop-color="#64748b" />
-                    <stop offset="80%" stop-color="#1e293b" />
-                    <stop offset="100%" stop-color="#020617" />
-                </linearGradient>
-                <!-- Luva Tática de Couro Blindada -->
-                <linearGradient id="gloveLeatherGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stop-color="#27272a" />
-                    <stop offset="50%" stop-color="#18181b" />
-                    <stop offset="100%" stop-color="#09090b" />
-                </linearGradient>
-                <!-- Blindagem Metálica dos Nós dos Dedos (Knuckles) -->
-                <linearGradient id="armorKevlar" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#4b5563" />
-                    <stop offset="50%" stop-color="#d1d5db" />
-                    <stop offset="100%" stop-color="#1f2937" />
-                </linearGradient>
-            </defs>
-
-            <!-- Braço que se estende do canto inferior direito -->
-            <path d="M 220 400 L 400 280 L 400 400 Z" fill="url(#gloveLeatherGrad)" />
-            
-            <!-- Manga do Casaco de Veludo Gótico (Azul Escuro com abas douradas) -->
-            <path d="M 310 330 L 400 260 L 400 370 Z" fill="#0f172a" stroke="#d97706" stroke-width="1.5" />
-
-            <!-- Punho e Corpo da Pistola (PP7 Clássica) -->
-            <!-- Cabo da Pistola com empunhadura antiderrapante preta -->
-            <path d="M 210 220 L 260 300 L 210 340 L 170 260 Z" fill="#090d16" stroke="#000000" stroke-width="3" />
-            <!-- Ranhuras do Cabo antiderrapante -->
-            <path d="M 190 270 L 220 315 M 195 285 L 225 330" stroke="#18181b" stroke-width="2.5" />
-
-            <!-- Guarda-Mato (Protetor do Gatilho) -->
-            <path d="M 160 215 Q 140 235, 170 255 L 195 240" stroke="url(#steelGlint)" stroke-width="5" fill="none" />
-            <!-- Gatilho de Prata Polida -->
-            <path d="M 172 225 Q 160 240, 180 244" stroke="#e2e8f0" stroke-width="3.5" fill="none" />
-
-            <!-- Mecanismo de Disparo / Cão da Pistola -->
-            <path d="M 235 180 Q 255 175, 240 195 Z" fill="url(#steelGlint)" stroke="#020617" />
-
-            <!-- Slide Superior (Ferrolho Metálico com ranhuras de ejeção) -->
-            <path d="M 150 160 L 245 190 L 230 250 L 155 225 Z" fill="url(#pistolBaseGrad)" stroke="#020617" stroke-width="3" />
-            <path d="M 155 165 L 235 190 L 225 210 L 155 185 Z" fill="url(#steelGlint)" opacity="0.9" />
-            
-            <!-- Linhas de ranhuras no ferrolho metálico -->
-            <line x1="210" y1="192" x2="206" y2="215" stroke="#090d16" stroke-width="3" />
-            <line x1="215" y1="194" x2="211" y2="217" stroke="#090d16" stroke-width="3" />
-            <line x1="220" y1="196" x2="216" y2="219" stroke="#090d16" stroke-width="3" />
-
-            <!-- Silenciador Longo de Alta Definição (PP7 de GoldenEye 007) -->
-            <!-- Rosca de conexão -->
-            <path d="M 152 161 L 165 164 L 158 145 L 145 141 Z" fill="url(#pistolBaseGrad)" />
-            <!-- Corpo cilíndrico do Silenciador -->
-            <path d="M 148 142 L 161 146 L 95 38 L 82 34 Z" fill="url(#silencerBarrelGrad)" stroke="#020617" stroke-width="2" />
-            <!-- Ponta de saída do projétil -->
-            <path d="M 82 34 L 95 38 L 91 26 L 78 22 Z" fill="#020617" />
-            <!-- Linha de brilho dinâmico para realçar a forma cilíndrica 3D do cano -->
-            <line x1="152" y1="141" x2="86" y2="33" stroke="#ffffff" stroke-width="3" opacity="0.85" />
-            <line x1="155" y1="143" x2="89" y2="35" stroke="#94a3b8" stroke-width="1.5" opacity="0.5" />
-
-            <!-- Mão com Luva Tática segurando a pistola com dedos definidos -->
-            <!-- Dedo Polegar cruzando o cão -->
-            <path d="M 230 235 C 248 235, 246 255, 226 260 Z" fill="url(#gloveLeatherGrad)" stroke="#18181b" stroke-width="1.5" />
-            <!-- Dedo Indicador dentro do guarda-mato, tocando o gatilho -->
-            <path d="M 195 220 Q 158 225, 172 245 Q 192 240, 195 220 Z" fill="url(#gloveLeatherGrad)" stroke="#18181b" stroke-width="2" />
-            <!-- Placa de proteção metálica no dedo indicador -->
-            <path d="M 182 226 L 175 233" stroke="url(#armorKevlar)" stroke-width="3.5" stroke-linecap="round" />
-
-            <!-- Dedo Médio envolvendo a empunhadura -->
-            <path d="M 205 240 Q 165 242, 178 265 Q 212 260, 205 240 Z" fill="url(#gloveLeatherGrad)" stroke="#18181b" stroke-width="2" />
-            <path d="M 190 246 L 182 254" stroke="url(#armorKevlar)" stroke-width="4" stroke-linecap="round" />
-
-            <!-- Dedo Anelar -->
-            <path d="M 210 258 Q 175 261, 185 284 Q 218 278, 210 258 Z" fill="url(#gloveLeatherGrad)" stroke="#18181b" stroke-width="2" />
-            <path d="M 196 264 L 189 272" stroke="url(#armorKevlar)" stroke-width="4" stroke-linecap="round" />
-
-            <!-- Dedo Mindinho -->
-            <path d="M 215 276 Q 185 279, 192 302 Q 225 296, 215 276 Z" fill="url(#gloveLeatherGrad)" stroke="#18181b" stroke-width="2" />
-            <path d="M 202 282 L 195 290" stroke="url(#armorKevlar)" stroke-width="4" stroke-linecap="round" />
-        </svg>
+        <!-- Imagem da Mão Segurando a Arma (PNG) -->
+        <img id="weapon-sprite" src="pistola.png" class="w-full h-full transition-transform duration-100 origin-center object-contain object-center" alt="Weapon" />
     </div>
 
     <script>
@@ -550,6 +518,14 @@
 
         // --- VARIÁVEIS DE ESTADO ---
         let scene, camera, renderer, clock;
+        // Ambient / lighting references for environment variants
+        let ambientLight, moonLight, floorMesh;
+        // Minimap sizing
+        let minimapSize = 96;
+        let minimapLargeSize = 260;
+        let minimapIsLarge = false;
+        // Environment variant presets (filled later)
+        let environmentVariants = {};
         let keys = { w: false, a: false, s: false, d: false };
         let player = {
             x: 0,
@@ -899,181 +875,400 @@
 
             ctx.clearRect(0, 0, 256, 256);
 
-            // Cores e tons para simular pelos realistas em camadas
-            let cBody, cCrina, cHead, cEye, cEyePupil, cMouth, cSkinDetail;
+            // Cores e tons para simular pelos realistas em camadas com mais profundidade
+            let cBody, cCrina, cHead, cEye, cEyePupil, cMouth, cSkinDetail, cSecondary;
             if (type === 'comum') {
-                cBody = '#38221b'; cCrina = '#573c32'; cHead = '#271714'; cEye = '#ff3300'; cEyePupil = '#ffff00'; cMouth = '#550505'; cSkinDetail = '#180e0c';
+                cBody = '#4a3428'; cCrina = '#6b5344'; cHead = '#3d2817'; cEye = '#ff2200'; cEyePupil = '#ffff00'; cMouth = '#660606'; cSkinDetail = '#1a0f0c'; cSecondary = '#2a1810';
             } else if (type === 'veloz') {
-                cBody = '#15151c'; cCrina = '#2f2f3d'; cHead = '#0e0e14'; cEye = '#facc15'; cEyePupil = '#ea580c'; cMouth = '#450202'; cSkinDetail = '#07070b';
+                cBody = '#1a1a24'; cCrina = '#38384a'; cHead = '#0f0f18'; cEye = '#ffdd00'; cEyePupil = '#ff6600'; cMouth = '#550505'; cSkinDetail = '#08080c'; cSecondary = '#121216';
             } else if (type === 'bruto') {
-                cBody = '#434a54'; cCrina = '#65717f'; cHead = '#2b303a'; cEye = '#dc2626'; cEyePupil = '#000000'; cMouth = '#6b0303'; cSkinDetail = '#1c1e24';
+                cBody = '#5a6270'; cCrina = '#7a8294'; cHead = '#383d4a'; cEye = '#ee3333'; cEyePupil = '#1a1a1a'; cMouth = '#8b1111'; cSkinDetail = '#202632'; cSecondary = '#2a3038';
             } else if (type === 'alfa') {
-                cBody = '#cbd5e1'; cCrina = '#f8fafc'; cHead = '#94a3b8'; cEye = '#ec4899'; cEyePupil = '#ffffff'; cMouth = '#880202'; cSkinDetail = '#64748b';
+                cBody = '#d4e0ed'; cCrina = '#fafbff'; cHead = '#a0afc2'; cEye = '#ff1493'; cEyePupil = '#ffffff'; cMouth = '#aa0000'; cSkinDetail = '#6a7a8f'; cSecondary = '#8090a8';
             }
 
             // Nota: O sprite morto é obsoleto pois o sistema agora tomba e fadeia o sprite vivo,
             // mas mantemos o canvas morto para o Bestiário ou redundância.
             if (state === 'dead') {
-                const bloodGrad = ctx.createRadialGradient(128, 210, 10, 128, 210, 90);
-                bloodGrad.addColorStop(0, 'rgba(180, 0, 0, 0.95)');
-                bloodGrad.addColorStop(0.7, 'rgba(110, 0, 0, 0.7)');
-                bloodGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-                ctx.fillStyle = bloodGrad;
-                ctx.beginPath(); ctx.ellipse(128, 210, 90, 30, 0, 0, Math.PI * 2); ctx.fill();
-
+                // Sangue dramático
+                for (let i = 0; i < 3; i++) {
+                    const bloodGrad = ctx.createRadialGradient(128 + (Math.random() - 0.5) * 80, 210, 10, 128 + (Math.random() - 0.5) * 80, 210, 70);
+                    bloodGrad.addColorStop(0, 'rgba(220, 20, 20, 0.9)');
+                    bloodGrad.addColorStop(0.6, 'rgba(140, 10, 10, 0.6)');
+                    bloodGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                    ctx.fillStyle = bloodGrad;
+                    ctx.beginPath(); ctx.ellipse(128 + (Math.random() - 0.5) * 80, 210, 90, 35, 0, 0, Math.PI * 2); ctx.fill();
+                }
                 ctx.fillStyle = cHead;
+                ctx.globalAlpha = 0.4;
                 ctx.beginPath(); ctx.ellipse(128, 200, 68, 26, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.globalAlpha = 1.0;
                 return canvas;
             }
 
             const isAttacking = (state === 'attack');
             const walkCycle = (state === 'walk2');
 
-            // 1. Pernas Traseiras Digitígradas com Gradiente de Volume
-            const legGrad = ctx.createLinearGradient(0, 180, 0, 240);
-            legGrad.addColorStop(0, cBody);
-            legGrad.addColorStop(1, cSkinDetail);
+            // 1. Pernas Traseiras Digitígradas com Gradiente Muscular Detalhado
+            const legGrad = ctx.createLinearGradient(0, 160, 0, 256);
+            legGrad.addColorStop(0, cCrina);
+            legGrad.addColorStop(0.3, cBody);
+            legGrad.addColorStop(0.8, cSkinDetail);
+            legGrad.addColorStop(1, '#000000');
+            
             ctx.fillStyle = legGrad;
             ctx.strokeStyle = cSkinDetail;
-            ctx.lineWidth = type === 'bruto' ? 24 : (type === 'veloz' ? 12 : 18);
+            ctx.lineWidth = type === 'bruto' ? 28 : (type === 'veloz' ? 14 : 20);
+            ctx.lineJoin = 'round';
+            ctx.lineCap = 'round';
             
             ctx.beginPath();
             if (walkCycle) {
-                ctx.moveTo(86, 180); ctx.lineTo(64, 240); ctx.lineTo(92, 244);
-                ctx.moveTo(154, 180); ctx.lineTo(176, 230); ctx.lineTo(196, 236);
+                // Animação de caminhada mais natural
+                ctx.moveTo(82, 180); ctx.lineTo(60, 244); ctx.lineTo(88, 248);
+                ctx.moveTo(158, 180); ctx.lineTo(180, 234); ctx.lineTo(200, 240);
             } else {
-                ctx.moveTo(80, 180); ctx.lineTo(70, 236); ctx.lineTo(90, 240);
-                ctx.moveTo(160, 180); ctx.lineTo(170, 236); ctx.lineTo(190, 240);
+                ctx.moveTo(76, 180); ctx.lineTo(66, 240); ctx.lineTo(86, 244);
+                ctx.moveTo(164, 180); ctx.lineTo(174, 240); ctx.lineTo(194, 244);
             }
             ctx.stroke();
+            
+            // Patas com cascos
+            ctx.fillStyle = '#1a1a1a';
+            ctx.beginPath(); ctx.ellipse(isAttacking ? 75 : 76, walkCycle ? 244 : 242, 8, 6, 0.1, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(isAttacking ? 185 : 184, walkCycle ? 238 : 242, 8, 6, -0.1, 0, Math.PI * 2); ctx.fill();
 
-            // 2. Cauda Peluda com Curvas Complexas
-            ctx.fillStyle = cSkinDetail;
+            // 2. Cauda Peluda com Movimento Dinâmico
+            ctx.fillStyle = cBody;
             ctx.beginPath();
-            ctx.moveTo(160, 170); ctx.quadraticCurveTo(230, 190, 210, 230); ctx.quadraticCurveTo(184, 210, 160, 184); ctx.closePath();
+            if (walkCycle) {
+                ctx.moveTo(162, 168); ctx.quadraticCurveTo(240, 200, 220, 250);
+            } else {
+                ctx.moveTo(162, 170); ctx.quadraticCurveTo(235, 190, 215, 240);
+            }
+            ctx.quadraticCurveTo(185, 210, 162, 184);
+            ctx.closePath();
             ctx.fill();
-
-            // 3. Tronco e Corcunda Musculosa com Sombreamento 3D
-            const chestRadius = type === 'bruto' ? 68 : (type === 'veloz' ? 40 : 54);
-            const bodyGrad = ctx.createRadialGradient(128, 140, 5, 128, 140, chestRadius);
-            bodyGrad.addColorStop(0, cCrina);
-            bodyGrad.addColorStop(0.8, cBody);
-            bodyGrad.addColorStop(1, cSkinDetail);
-            ctx.fillStyle = bodyGrad;
-            ctx.beginPath(); ctx.arc(128, 140, chestRadius, 0, Math.PI * 2); ctx.fill();
-
-            // 4. Crina das Costas Espessa e Selvagem
-            ctx.fillStyle = cCrina;
-            ctx.beginPath();
-            ctx.moveTo(76, 110); ctx.quadraticCurveTo(128, type === 'bruto' ? 44 : 60, 180, 110); ctx.lineTo(160, 156); ctx.lineTo(96, 156); ctx.closePath();
-            ctx.fill();
-
-            // Desenhar mechas de pelos individuais para realismo
+            
+            // Pelos da cauda
             ctx.strokeStyle = cCrina;
-            ctx.lineWidth = 4;
-            for (let i = 0; i < 24; i++) {
-                const px = 80 + Math.random() * 96;
-                const py = 70 + Math.random() * 60;
+            ctx.lineWidth = 2;
+            for (let i = 0; i < 8; i++) {
+                const tailPos = 0.2 + (i / 8) * 0.8;
+                const baseX = 162 + (walkCycle ? 240 - 162 : 235 - 162) * tailPos;
+                const baseY = 170 + (walkCycle ? 250 - 168 : 240 - 170) * tailPos;
                 ctx.beginPath();
-                ctx.moveTo(px, py);
-                ctx.quadraticCurveTo(px + (Math.random() - 0.5) * 20, py + 15, px + (Math.random() - 0.5) * 10, py + 30);
+                ctx.moveTo(baseX, baseY);
+                ctx.quadraticCurveTo(baseX + (Math.random() - 0.5) * 15, baseY + 10, baseX + (Math.random() - 0.5) * 8, baseY + 20);
                 ctx.stroke();
             }
 
-            // Cicatrizes de Combate para o Bruto
-            if (type === 'bruto') {
-                ctx.strokeStyle = '#990000';
-                ctx.lineWidth = 6;
-                ctx.beginPath(); ctx.moveTo(104, 120); ctx.lineTo(124, 160); ctx.moveTo(148, 116); ctx.lineTo(132, 152); ctx.stroke();
-            }
+            // 3. Tronco Musculoso com Sombreamento 3D Profundo
+            const chestRadius = type === 'bruto' ? 72 : (type === 'veloz' ? 42 : 58);
+            
+            // Sombra do tronco
+            const shadowGrad = ctx.createRadialGradient(132, 145, 0, 128, 140, chestRadius + 8);
+            shadowGrad.addColorStop(0, 'rgba(0, 0, 0, 0)');
+            shadowGrad.addColorStop(0.7, 'rgba(0, 0, 0, 0.15)');
+            shadowGrad.addColorStop(1, 'rgba(0, 0, 0, 0.3)');
+            ctx.fillStyle = shadowGrad;
+            ctx.beginPath(); ctx.arc(128, 140, chestRadius + 8, 0, Math.PI * 2); ctx.fill();
+            
+            const bodyGrad = ctx.createRadialGradient(128, 130, 2, 128, 145, chestRadius);
+            bodyGrad.addColorStop(0, cCrina);
+            bodyGrad.addColorStop(0.5, cBody);
+            bodyGrad.addColorStop(0.85, cSkinDetail);
+            bodyGrad.addColorStop(1, cSecondary);
+            ctx.fillStyle = bodyGrad;
+            ctx.beginPath(); ctx.arc(128, 140, chestRadius, 0, Math.PI * 2); ctx.fill();
+            
+            // Músculos do peito
+            ctx.strokeStyle = 'rgba(0, 0, 0, 0.25)';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(128, 110); ctx.lineTo(128, 170);
+            ctx.moveTo(110, 140); ctx.quadraticCurveTo(100, 140, 95, 145);
+            ctx.moveTo(146, 140); ctx.quadraticCurveTo(156, 140, 161, 145);
+            ctx.stroke();
 
-            // Altar Runas Brilhantes para o Alfa
-            if (type === 'alfa') {
-                ctx.strokeStyle = '#38bdf8';
-                ctx.lineWidth = 4;
-                ctx.shadowColor = '#0284c7';
-                ctx.shadowBlur = 10;
+            // 4. Crina das Costas Espessa e Selvagem com Textura
+            ctx.fillStyle = cCrina;
+            ctx.beginPath();
+            const crineHeight = type === 'bruto' ? 50 : (type === 'veloz' ? 65 : 55);
+            ctx.moveTo(70, 115); 
+            ctx.quadraticCurveTo(85, type === 'bruto' ? 40 : 50, 128, type === 'bruto' ? 35 : 45); 
+            ctx.quadraticCurveTo(171, type === 'bruto' ? 40 : 50, 186, 115); 
+            ctx.lineTo(170, 155); 
+            ctx.lineTo(86, 155); 
+            ctx.closePath();
+            ctx.fill();
+
+            // Mechas individuais de pelos para realismo extremo
+            for (let i = 0; i < 32; i++) {
+                const px = 75 + Math.random() * 106;
+                const py = 45 + Math.random() * 70;
+                const hairColor = Math.random() > 0.6 ? cCrina : 'rgba(' + parseInt(cCrina.substring(1, 3), 16) + ',' + parseInt(cCrina.substring(3, 5), 16) + ',' + parseInt(cCrina.substring(5, 7), 16) + ',0.7)';
+                ctx.strokeStyle = hairColor;
+                ctx.lineWidth = 1 + Math.random() * 1.5;
                 ctx.beginPath();
-                ctx.moveTo(110, 120); ctx.lineTo(128, 100); ctx.lineTo(146, 120); ctx.stroke();
-                ctx.shadowBlur = 0; // reseta shadow do canvas
+                ctx.moveTo(px, py);
+                ctx.quadraticCurveTo(px + (Math.random() - 0.5) * 25, py + 15, px + (Math.random() - 0.5) * 12, py + 35);
+                ctx.stroke();
             }
 
-            // 5. Cabeça de Lobo com Focinho em Perspetiva
-            const headY = isAttacking ? 104 : 92;
-            const headGrad = ctx.createRadialGradient(128, headY, 2, 128, headY, 30);
+            // Cicatrizes de Combate para o Bruto com sangue
+            if (type === 'bruto') {
+                ctx.strokeStyle = '#aa1111';
+                ctx.lineWidth = 7;
+                ctx.beginPath(); ctx.moveTo(100, 115); ctx.lineTo(124, 165); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(156, 110); ctx.lineTo(132, 158); ctx.stroke();
+                
+                // Sangue ressecado
+                ctx.strokeStyle = '#661111';
+                ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.moveTo(100, 115); ctx.lineTo(124, 165); ctx.stroke();
+            }
+
+            // Marcas Mágicas Brilhantes para o Alfa
+            if (type === 'alfa') {
+                ctx.strokeStyle = '#00ccff';
+                ctx.lineWidth = 3;
+                ctx.shadowColor = '#0099ff';
+                ctx.shadowBlur = 15;
+                
+                // Runa arcana
+                ctx.beginPath();
+                ctx.moveTo(105, 120); ctx.lineTo(128, 98); ctx.lineTo(151, 120);
+                ctx.lineTo(145, 150); ctx.lineTo(111, 150); ctx.closePath();
+                ctx.stroke();
+                
+                // Glifo brilhante
+                ctx.beginPath();
+                ctx.arc(128, 125, 8, 0, Math.PI * 2);
+                ctx.stroke();
+                
+                ctx.shadowBlur = 0; // reseta shadow
+            }
+
+            // 5. Cabeça de Lobo com Focinho em Perspetiva Realista
+            const headY = isAttacking ? 100 : 90;
+            
+            // Sombreamento da cabeça
+            const headShadow = ctx.createRadialGradient(130, headY + 2, 2, 128, headY, 32);
+            headShadow.addColorStop(0, 'rgba(0, 0, 0, 0)');
+            headShadow.addColorStop(1, 'rgba(0, 0, 0, 0.2)');
+            ctx.fillStyle = headShadow;
+            ctx.beginPath(); ctx.arc(128, headY, 32, 0, Math.PI * 2); ctx.fill();
+            
+            const headGrad = ctx.createRadialGradient(128, headY - 3, 1, 128, headY, 32);
             headGrad.addColorStop(0, cCrina);
-            headGrad.addColorStop(0.7, cHead);
+            headGrad.addColorStop(0.6, cHead);
             headGrad.addColorStop(1, cSkinDetail);
             ctx.fillStyle = headGrad;
             ctx.beginPath(); ctx.arc(128, headY, 30, 0, Math.PI * 2); ctx.fill();
 
-            // Orelhas Pontudas Detalhadas
+            // Orelhas Pontudas com Textura Interna
             ctx.fillStyle = cSkinDetail;
-            ctx.beginPath();
-            const earH = type === 'veloz' ? 60 : 40;
-            ctx.moveTo(104, headY - 20); ctx.lineTo(108 - earH/2, headY - earH); ctx.lineTo(116, headY - 28);
-            ctx.moveTo(152, headY - 20); ctx.lineTo(148 + earH/2, headY - earH); ctx.lineTo(140, headY - 28);
-            ctx.fill();
-
-            // Focinho Alongado e Carnudo
-            ctx.fillStyle = cSkinDetail;
-            ctx.beginPath();
-            ctx.moveTo(108, headY); ctx.lineTo(128, headY + 42); ctx.lineTo(148, headY); ctx.closePath();
-            ctx.fill();
-
-            // Olhos Ferais com Brilho Intenso (Glow)
-            const leftEyeGrad = ctx.createRadialGradient(116, headY - 4, 1, 116, headY - 4, 10);
-            leftEyeGrad.addColorStop(0, '#ffffff');
-            leftEyeGrad.addColorStop(0.2, cEyePupil);
-            leftEyeGrad.addColorStop(1, 'rgba(255, 0, 0, 0)');
+            const earH = type === 'veloz' ? 68 : (type === 'bruto' ? 32 : 42);
             
-            const rightEyeGrad = ctx.createRadialGradient(140, headY - 4, 1, 140, headY - 4, 10);
-            rightEyeGrad.addColorStop(0, '#ffffff');
-            rightEyeGrad.addColorStop(0.2, cEyePupil);
-            rightEyeGrad.addColorStop(1, 'rgba(255, 0, 0, 0)');
+            // Orelha esquerda
+            ctx.beginPath();
+            ctx.moveTo(104, headY - 20);
+            ctx.lineTo(105 - earH/2.5, headY - earH);
+            ctx.lineTo(118, headY - 28);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Interior rosa da orelha
+            ctx.fillStyle = 'rgba(255, 150, 150, 0.4)';
+            ctx.beginPath();
+            ctx.moveTo(108, headY - 18);
+            ctx.lineTo(103 - earH/3, headY - earH + 10);
+            ctx.lineTo(114, headY - 25);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Orelha direita
+            ctx.fillStyle = cSkinDetail;
+            ctx.beginPath();
+            ctx.moveTo(152, headY - 20);
+            ctx.lineTo(151 + earH/2.5, headY - earH);
+            ctx.lineTo(138, headY - 28);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Interior rosa da orelha
+            ctx.fillStyle = 'rgba(255, 150, 150, 0.4)';
+            ctx.beginPath();
+            ctx.moveTo(148, headY - 18);
+            ctx.lineTo(153 + earH/3, headY - earH + 10);
+            ctx.lineTo(142, headY - 25);
+            ctx.closePath();
+            ctx.fill();
 
-            ctx.fillStyle = leftEyeGrad;
-            ctx.beginPath(); ctx.arc(116, headY - 4, 10, 0, Math.PI * 2); ctx.fill();
-            ctx.fillStyle = rightEyeGrad;
-            ctx.beginPath(); ctx.arc(140, headY - 4, 10, 0, Math.PI * 2); ctx.fill();
+            // Focinho Alongado Carnudo com Nariz
+            ctx.fillStyle = cSkinDetail;
+            ctx.beginPath();
+            ctx.moveTo(106, headY + 2); 
+            ctx.lineTo(128, headY + 48); 
+            ctx.lineTo(150, headY + 2); 
+            ctx.closePath();
+            ctx.fill();
+            
+            // Nariz preto
+            ctx.fillStyle = '#000000';
+            ctx.beginPath(); ctx.ellipse(128, headY + 42, 6, 5, 0, 0, Math.PI * 2); ctx.fill();
+            
+            // Narinas
+            ctx.fillStyle = '#1a1a1a';
+            ctx.beginPath(); ctx.ellipse(124, headY + 44, 2, 1.5, 0, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(132, headY + 44, 2, 1.5, 0, 0, Math.PI * 2); ctx.fill();
 
-            // Boca Arreganhada com Presas Brancas
+            // Olhos Ferais com Brilho Intenso (Glow Realista)
+            // Branco do olho
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath(); ctx.ellipse(115, headY - 6, 9, 11, 0.1, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.ellipse(141, headY - 6, 9, 11, -0.1, 0, Math.PI * 2); ctx.fill();
+            
+            // Íris
+            ctx.fillStyle = cEye;
+            ctx.beginPath(); ctx.arc(115, headY - 4, 6, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(141, headY - 4, 6, 0, Math.PI * 2); ctx.fill();
+            
+            // Pupila
+            ctx.fillStyle = cEyePupil;
+            ctx.beginPath(); ctx.arc(115, headY - 2, 3.5, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(141, headY - 2, 3.5, 0, Math.PI * 2); ctx.fill();
+            
+            // Reflexo brilhante
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+            ctx.beginPath(); ctx.arc(113, headY - 4, 1.5, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(139, headY - 4, 1.5, 0, Math.PI * 2); ctx.fill();
+
+            // Boca Arreganhada com Presas Afiadas
             if (isAttacking) {
-                ctx.fillStyle = cMouth;
-                ctx.fillRect(112, headY + 16, 32, 20);
-                
-                // Desenhar presas afiadas detalhadamente
-                ctx.fillStyle = '#ffffff';
+                // Boca aberta agressiva
+                ctx.fillStyle = '#330000';
                 ctx.beginPath();
-                ctx.moveTo(114, headY + 15); ctx.lineTo(118, headY + 25); ctx.lineTo(122, headY + 15);
-                ctx.moveTo(134, headY + 15); ctx.lineTo(138, headY + 25); ctx.lineTo(142, headY + 15);
+                ctx.moveTo(110, headY + 18); 
+                ctx.lineTo(146, headY + 18); 
+                ctx.lineTo(145, headY + 36); 
+                ctx.lineTo(111, headY + 36); 
+                ctx.closePath();
+                ctx.fill();
+                
+                // Gengiva
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+                ctx.fillRect(110, headY + 18, 36, 4);
+                
+                // Presas afiadas e grandes
+                ctx.fillStyle = '#ffffff';
+                for (let i = 0; i < 4; i++) {
+                    const x = 115 + i * 8;
+                    ctx.beginPath();
+                    ctx.moveTo(x, headY + 18);
+                    ctx.lineTo(x - 2.5, headY + 28);
+                    ctx.lineTo(x + 2.5, headY + 28);
+                    ctx.closePath();
+                    ctx.fill();
+                    
+                    // Sombra nas presas
+                    ctx.fillStyle = 'rgba(200, 200, 200, 0.5)';
+                    ctx.beginPath();
+                    ctx.moveTo(x, headY + 18);
+                    ctx.lineTo(x - 2.5, headY + 28);
+                    ctx.lineTo(x, headY + 26);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.fillStyle = '#ffffff';
+                }
+                
+                // Língua vermelha
+                ctx.fillStyle = '#cc4444';
+                ctx.beginPath();
+                ctx.ellipse(128, headY + 32, 10, 6, 0, 0, Math.PI * 2);
                 ctx.fill();
             } else {
+                // Boca fechada neutra
                 ctx.strokeStyle = cMouth;
-                ctx.lineWidth = 5;
-                ctx.beginPath(); ctx.moveTo(114, headY + 16); ctx.lineTo(142, headY + 16); ctx.stroke();
+                ctx.lineWidth = 4;
+                ctx.lineCap = 'round';
+                ctx.beginPath(); 
+                ctx.moveTo(114, headY + 18); 
+                ctx.quadraticCurveTo(128, headY + 22, 142, headY + 18); 
+                ctx.stroke();
             }
 
-            // 6. Braços e Garras Afiadas (Visual Doom-Style Claws)
+            // 6. Braços Musculosos e Garras Afiadas (Estilo Demoníaco)
             ctx.fillStyle = cBody;
             ctx.strokeStyle = cSkinDetail;
-            ctx.lineWidth = 6;
+            ctx.lineWidth = 7;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            
             if (isAttacking) {
+                // Braços levantados agressivamente
                 ctx.beginPath();
-                ctx.moveTo(70, 140); ctx.quadraticCurveTo(24, 120, 32, 76);
-                ctx.moveTo(186, 140); ctx.quadraticCurveTo(232, 120, 224, 76);
+                ctx.moveTo(66, 140); 
+                ctx.quadraticCurveTo(32, 100, 28, 60);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(190, 140); 
+                ctx.quadraticCurveTo(224, 100, 228, 60);
                 ctx.stroke();
 
-                // Garras afiadas reluzentes
-                ctx.fillStyle = type === 'alfa' ? '#fbbf24' : '#f1f5f9';
-                ctx.beginPath();
-                ctx.moveTo(28, 76); ctx.lineTo(16, 56); ctx.lineTo(38, 68); ctx.fill();
-                ctx.beginPath();
-                ctx.moveTo(228, 76); ctx.lineTo(240, 56); ctx.lineTo(218, 68); ctx.fill();
+                // Garras afiadas e brilhantes
+                ctx.fillStyle = type === 'alfa' ? '#ffdd00' : '#e8e8e8';
+                
+                // Garra esquerda - 4 dedos
+                for (let i = 0; i < 4; i++) {
+                    const offset = (i - 1.5) * 6;
+                    ctx.beginPath();
+                    ctx.moveTo(24 + offset, 58);
+                    ctx.lineTo(18 + offset, 38);
+                    ctx.lineTo(28 + offset, 45);
+                    ctx.closePath();
+                    ctx.fill();
+                    
+                    // Brilho nas garras
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(22 + offset, 52);
+                    ctx.lineTo(20 + offset, 40);
+                    ctx.stroke();
+                }
+                
+                // Garra direita - 4 dedos
+                ctx.fillStyle = type === 'alfa' ? '#ffdd00' : '#e8e8e8';
+                for (let i = 0; i < 4; i++) {
+                    const offset = (i - 1.5) * 6;
+                    ctx.beginPath();
+                    ctx.moveTo(232 + offset, 58);
+                    ctx.lineTo(238 + offset, 38);
+                    ctx.lineTo(228 + offset, 45);
+                    ctx.closePath();
+                    ctx.fill();
+                    
+                    // Brilho nas garras
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(234 + offset, 52);
+                    ctx.lineTo(236 + offset, 40);
+                    ctx.stroke();
+                }
             } else {
+                // Braços pendurados naturalmente
                 ctx.beginPath();
-                ctx.moveTo(76, 140); ctx.lineTo(56, 196); ctx.lineTo(44, 184);
-                ctx.moveTo(180, 140); ctx.lineTo(200, 196); ctx.lineTo(212, 184);
+                ctx.moveTo(72, 142); 
+                ctx.quadraticCurveTo(54, 175, 42, 195);
+                ctx.stroke();
+                
+                ctx.beginPath();
+                ctx.moveTo(184, 142); 
+                ctx.quadraticCurveTo(202, 175, 214, 195);
                 ctx.stroke();
             }
 
@@ -1127,14 +1322,21 @@
             textures.ceiling.wrapS = THREE.RepeatWrapping; textures.ceiling.wrapT = THREE.RepeatWrapping;
             textures.ceiling.repeat.set(24, 24);
 
-            const ambientLight = new THREE.AmbientLight(0x1a2233, 0.65);
+            ambientLight = new THREE.AmbientLight(0x1a2233, 0.65);
             scene.add(ambientLight);
 
-            const moonLight = new THREE.DirectionalLight(0x4a628a, 0.8);
+            moonLight = new THREE.DirectionalLight(0x4a628a, 0.8);
             moonLight.position.set(5, 20, 5);
             scene.add(moonLight);
 
             buildMaze();
+
+            // Aplicar variante de cenário aleatória para mais variedade
+            try {
+                const variants = Object.keys(environmentVariants);
+                const chosen = variants[Math.floor(Math.random() * variants.length)];
+                applyEnvironmentVariant(chosen);
+            } catch (e) { console.log(e); }
 
             // Adiciona sistema global de poeira flutuante
             createDustSystem();
@@ -1173,7 +1375,7 @@
 
             // Chão de Pedra
             const floorGeo = new THREE.PlaneGeometry(MAP_WIDTH * GRID_SIZE, MAP_HEIGHT * GRID_SIZE);
-            const floorMesh = new THREE.Mesh(floorGeo, floorMaterial);
+            floorMesh = new THREE.Mesh(floorGeo, floorMaterial);
             floorMesh.rotation.x = -Math.PI / 2;
             floorMesh.position.set((MAP_WIDTH * GRID_SIZE) / 2 - GRID_SIZE/2, 0, (MAP_HEIGHT * GRID_SIZE) / 2 - GRID_SIZE/2);
             scene.add(floorMesh);
@@ -1521,7 +1723,7 @@
         function checkWallCollision(px, pz, radius) {
             const gridX = Math.round(px / GRID_SIZE);
             const gridZ = Math.round(pz / GRID_SIZE);
-            const checkRadius = 2; 
+            const checkRadius = 2;
 
             for (let z = gridZ - checkRadius; z <= gridZ + checkRadius; z++) {
                 for (let x = gridX - checkRadius; x <= gridX + checkRadius; x++) {
@@ -1538,7 +1740,13 @@
                             const distZ = pz - closestZ;
                             const distance = Math.hypot(distX, distZ);
 
-                            if (distance < radius) {
+                            // configurable padding per cell type to prevent clipping into pillars/grades
+                            let padding = 0.2; // default for walls
+                            if (cell === 3) padding = 0.9; // columns/pillars - keep more distance
+                            else if (cell === 4) padding = 0.5; // grates - partial collision buffer
+                            else if (cell === 5) padding = 0.7; // altar
+
+                            if (distance < radius + padding) {
                                 return true;
                             }
                         }
@@ -1666,13 +1874,22 @@
 
         function renderMinimap() {
             const canvas = document.getElementById('minimap-canvas');
+            if (!canvas) return;
+            renderMinimapOn(canvas);
+        }
+
+        function renderMinimapOn(canvas) {
+            if (!canvas) return;
             const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#111';
-            ctx.fillRect(0, 0, 96, 96);
+            const size = canvas.width || minimapSize;
+            ctx.clearRect(0, 0, size, size);
+            ctx.fillStyle = '#0b0b0b';
+            ctx.fillRect(0, 0, size, size);
 
-            const cellW = 96 / MAP_WIDTH;
-            const cellH = 96 / MAP_HEIGHT;
+            const cellW = size / MAP_WIDTH;
+            const cellH = size / MAP_HEIGHT;
 
+            // Draw map blocks
             for (let z = 0; z < MAP_HEIGHT; z++) {
                 for (let x = 0; x < MAP_WIDTH; x++) {
                     const block = MAP[z][x];
@@ -1681,12 +1898,13 @@
                         ctx.fillRect(x * cellW, z * cellH, cellW - 0.5, cellH - 0.5);
                     } else if (block === 4) {
                         ctx.strokeStyle = '#475569';
-                        ctx.lineWidth = 1.5;
+                        ctx.lineWidth = Math.max(1, size / 120);
                         ctx.strokeRect(x * cellW + 1, z * cellH + 1, cellW - 2, cellH - 2);
                     }
                 }
             }
 
+            // Werewolf markers
             werewolves.forEach(w => {
                 if (w.state !== 'dead' && w.isAggro) {
                     if (w.type === 'comum') ctx.fillStyle = '#f97316';
@@ -1696,22 +1914,78 @@
 
                     const gx = (w.x / GRID_SIZE) * cellW;
                     const gz = (w.z / GRID_SIZE) * cellH;
-                    ctx.beginPath(); ctx.arc(gx, gz, 2.2, 0, Math.PI * 2); ctx.fill();
+                    const r = Math.max(2, size / 96 * 2.6);
+                    ctx.beginPath(); ctx.arc(gx, gz, r, 0, Math.PI * 2); ctx.fill();
                 }
             });
 
+            // Player marker and facing cone
             const px = (player.x / GRID_SIZE) * cellW;
             const pz = (player.z / GRID_SIZE) * cellH;
+            const pr = Math.max(3, size / 96 * 3.5);
             ctx.fillStyle = '#10b981';
-            ctx.beginPath(); ctx.arc(px, pz, 2.5, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(px, pz, pr, 0, Math.PI * 2); ctx.fill();
 
+            // Facing direction line
             ctx.strokeStyle = '#10b981';
-            ctx.lineWidth = 2;
+            ctx.lineWidth = Math.max(2, size / 160);
             ctx.beginPath();
             ctx.moveTo(px, pz);
-            ctx.lineTo(px + Math.sin(player.angle) * 7, pz + Math.cos(player.angle) * 7);
+            ctx.lineTo(px + Math.sin(player.angle) * pr * 3.5, pz + Math.cos(player.angle) * pr * 3.5);
             ctx.stroke();
+
+            // Border
+            ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0.5, 0.5, size - 1, size - 1);
         }
+
+        function toggleMinimapSize() {
+            // Toggle an overlayed centered minimap instead of resizing the corner canvas
+            const existing = document.getElementById('minimap-overlay');
+            if (existing) {
+                existing.remove();
+                minimapIsLarge = false;
+                return;
+            }
+
+            minimapIsLarge = true;
+            const overlay = document.createElement('div');
+            overlay.id = 'minimap-overlay';
+            overlay.style.position = 'fixed';
+            overlay.style.inset = '0';
+            overlay.style.display = 'flex';
+            overlay.style.alignItems = 'center';
+            overlay.style.justifyContent = 'center';
+            overlay.style.background = 'rgba(0,0,0,0.65)';
+            overlay.style.zIndex = '70';
+
+            const size = Math.min(window.innerWidth, window.innerHeight) * 0.75;
+            const canvas = document.createElement('canvas');
+            canvas.id = 'minimap-overlay-canvas';
+            canvas.width = size;
+            canvas.height = size;
+            canvas.style.width = size + 'px';
+            canvas.style.height = size + 'px';
+            canvas.style.boxShadow = '0 8px 40px rgba(0,0,0,0.6)';
+            canvas.style.border = '4px solid rgba(255,255,255,0.06)';
+            canvas.style.borderRadius = '8px';
+            overlay.appendChild(canvas);
+
+            // Close on click or Esc
+            overlay.addEventListener('click', () => { overlay.remove(); minimapIsLarge = false; });
+            window.addEventListener('keydown', function escClose(e) { if (e.key && e.key.toLowerCase() === 'm') { overlay.remove(); minimapIsLarge = false; window.removeEventListener('keydown', escClose); } });
+
+            document.body.appendChild(overlay);
+            renderMinimapOn(canvas);
+        }
+
+        // Keybind to toggle minimap size (M)
+        window.addEventListener('keydown', (e) => {
+            if (e.key && e.key.toLowerCase() === 'm') {
+                toggleMinimapSize();
+            }
+        });
 
         function onWindowResize() {
             camera.aspect = window.innerWidth / window.innerHeight;
@@ -1917,6 +2191,7 @@
                     // Libertar cursor e pausar jogo imediatamente
                     document.exitPointerLock();
                     document.getElementById('pause-overlay').classList.remove('hidden');
+                    gameActive = false; // pause game loop
                     e.stopPropagation(); e.preventDefault();
                 }
             }
@@ -1961,6 +2236,7 @@
 
         document.getElementById('btn-resume').addEventListener('click', () => {
             requestLock();
+            gameActive = true; // resume game loop when resuming
         });
 
         document.getElementById('btn-restart').addEventListener('click', () => {
@@ -1990,7 +2266,9 @@
             if (document.pointerLockElement !== container) {
                 const isCodexOpen = !document.getElementById('bestiary-overlay').classList.contains('hidden');
                 const isSettingsOpen = !document.getElementById('settings-overlay').classList.contains('hidden');
-                if (gameActive && !player.isDead && !winState && !isCodexOpen && !isSettingsOpen) {
+                // Pause the game when pointer lock is lost
+                gameActive = false;
+                if (!isCodexOpen && !isSettingsOpen) {
                     document.getElementById('pause-overlay').classList.remove('hidden');
                 }
             } else {
